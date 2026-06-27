@@ -1,69 +1,120 @@
 import cv2
 import mediapipe as mp
 
-# Setup drawing tools
+# --- HELPER FUNCTION FOR ANATOMICAL BONES ---
+def draw_anatomical_bone(frame, landmarks, start_idx, end_idx, color, thickness=6):
+    """Draws a thick bone between two joint landmarks."""
+    if landmarks:
+        h, w, c = frame.shape
+        pt1 = (int(landmarks[start_idx].x * w), int(landmarks[start_idx].y * h))
+        pt2 = (int(landmarks[end_idx].x * w), int(landmarks[end_idx].y * h))
+        cv2.line(frame, pt1, pt2, color, thickness, cv2.LINE_AA)
+        cv2.circle(frame, pt1, thickness, (255, 255, 255), -1)
+        cv2.circle(frame, pt2, thickness, (255, 255, 255), -1)
+
+# --- SETUP MODELS ---
 mp_drawing = mp.solutions.drawing_utils
-mp_holistic = mp.solutions.holistic
+mp_drawing_styles = mp.solutions.drawing_styles
 
-# Create a simple green line style to avoid complex dictionary errors
-green_line = mp_drawing.DrawingSpec(color=(0, 255, 0), thickness=2, circle_radius=2)
-
-# Turn on webcam
-cap = cv2.VideoCapture(0)
-
-# Initialize the Holistic model (Tracks Face, Body, and Hands together)
-with mp_holistic.Holistic(
+# Face model
+mp_face_mesh = mp.solutions.face_mesh
+face_mesh = mp_face_mesh.FaceMesh(
     static_image_mode=False,
-    model_complexity=1,
-    smooth_landmarks=True,
+    max_num_faces=1,
+    refine_landmarks=True,
     min_detection_confidence=0.5,
     min_tracking_confidence=0.5
-) as holistic:
+)
 
-    print("Basic Tracker running. Press 'q' to quit.")
+# Body model
+mp_pose = mp.solutions.pose
+pose = mp_pose.Pose(
+    static_image_mode=False,
+    model_complexity=2,
+    smooth_landmarks=True,
+    min_detection_confidence=0.3,
+    min_tracking_confidence=0.5
+)
 
-    while cap.isOpened():
-        success, image = cap.read()
-        if not success:
-            print("Ignoring empty camera frame.")
-            continue
+# Hands model
+mp_hands = mp.solutions.hands
+hands = mp_hands.Hands(
+    static_image_mode=False,
+    max_num_hands=2,
+    min_detection_confidence=0.5,
+    min_tracking_confidence=0.5
+)
 
-        # Flip image for a selfie-view, then convert to RGB
-        image = cv2.cvtColor(cv2.flip(image, 1), cv2.COLOR_BGR2RGB)
-        image.flags.writeable = False
+# --- START WEBCAM ---
+cap = cv2.VideoCapture(0)
+if not cap.isOpened():
+    print("ERROR: Could not open webcam!")
+    exit()
+
+print("Stardance Anatomical Tracker running. Press 'q' to quit.")
+
+# --- MAIN LOOP ---
+while True:
+    ret, frame = cap.read()
+    if not ret or frame is None:
+        break
+
+    rgb_frame = cv2.cvtColor(frame, cv2.COLOR_BGR2RGB)
+    
+    # Process all models
+    pose_results = pose.process(rgb_frame)
+    face_results = face_mesh.process(rgb_frame)
+    hand_results = hands.process(rgb_frame)
+
+    # Draw Face Mesh
+    if face_results.multi_face_landmarks:
+        for face_landmarks in face_results.multi_face_landmarks:
+            mp_drawing.draw_landmarks(
+                image=frame,
+                landmark_list=face_landmarks,
+                connections=mp_face_mesh.FACEMESH_TESSELATION,
+                landmark_drawing_spec=None,
+                connection_drawing_spec=mp_drawing_styles.get_default_face_mesh_tesselation_style()
+            )
+
+    # Draw Anatomical Body Bones
+    if pose_results.pose_landmarks:
+        landmarks = pose_results.pose_landmarks.landmark
         
-        # Process the image
-        results = holistic.process(image)
-        
-        image.flags.writeable = True
-        image = cv2.cvtColor(image, cv2.COLOR_RGB2BGR)
+        # ARMS (Orange)
+        draw_anatomical_bone(frame, landmarks, 11, 13, (255, 150, 0), 6)  # Left Shoulder to Elbow
+        draw_anatomical_bone(frame, landmarks, 13, 15, (255, 150, 0), 4)  # Left Elbow to Wrist
+        draw_anatomical_bone(frame, landmarks, 12, 14, (255, 150, 0), 6)  # Right Shoulder to Elbow
+        draw_anatomical_bone(frame, landmarks, 14, 16, (255, 150, 0), 4)  # Right Elbow to Wrist
 
-        # 1. Draw Face Mesh
-        if results.face_landmarks:
+        # LEGS (Red)
+        draw_anatomical_bone(frame, landmarks, 23, 25, (0, 100, 255), 8)  # Left Hip to Knee
+        draw_anatomical_bone(frame, landmarks, 25, 27, (0, 100, 255), 5)  # Left Knee to Ankle
+        draw_anatomical_bone(frame, landmarks, 24, 26, (0, 100, 255), 8)  # Right Hip to Knee
+        draw_anatomical_bone(frame, landmarks, 26, 28, (0, 100, 255), 5)  # Right Knee to Ankle
+
+        # TORSO (Yellow)
+        draw_anatomical_bone(frame, landmarks, 11, 23, (0, 255, 255), 5)  # Left Shoulder to Hip
+        draw_anatomical_bone(frame, landmarks, 12, 24, (0, 255, 255), 5)  # Right Shoulder to Hip
+        draw_anatomical_bone(frame, landmarks, 11, 12, (0, 255, 255), 5)  # Shoulders
+        draw_anatomical_bone(frame, landmarks, 23, 24, (0, 255, 255), 5)  # Hips
+
+    # Draw Hands
+    if hand_results.multi_hand_landmarks:
+        for hand_landmarks in hand_results.multi_hand_landmarks:
             mp_drawing.draw_landmarks(
-                image, results.face_landmarks, mp_holistic.FACEMESH_TESSELATION, green_line, green_line)
+                image=frame,
+                landmark_list=hand_landmarks,
+                connections=mp_hands.HAND_CONNECTIONS,
+                landmark_drawing_spec=mp_drawing_styles.get_default_hand_landmarks_style(),
+                connection_drawing_spec=mp_drawing_styles.get_default_hand_connections_style()
+            )
 
-        # 2. Draw Body Pose
-        if results.pose_landmarks:
-            mp_drawing.draw_landmarks(
-                image, results.pose_landmarks, mp_holistic.POSE_CONNECTIONS, green_line, green_line)
+    # Show the result
+    cv2.imshow('Stardance Anatomical Tracker', frame)
 
-        # 3. Draw Left Hand
-        if results.left_hand_landmarks:
-            mp_drawing.draw_landmarks(
-                image, results.left_hand_landmarks, mp_holistic.HAND_CONNECTIONS, green_line, green_line)
-
-        # 4. Draw Right Hand
-        if results.right_hand_landmarks:
-            mp_drawing.draw_landmarks(
-                image, results.right_hand_landmarks, mp_holistic.HAND_CONNECTIONS, green_line, green_line)
-
-        # Show the window
-        cv2.imshow('Basic Stardance Tracker', image)
-
-        # Press 'q' to quit
-        if cv2.waitKey(5) & 0xFF == ord('q'):
-            break
+    if cv2.waitKey(5) & 0xFF == ord('q'):
+        break
 
 # Clean up
 cap.release()
