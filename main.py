@@ -17,6 +17,8 @@ cap=cv2.VideoCapture(0)
 
 peace_timer=0
 
+fist_timer=0
+
 is_unlocked=False
 
 while cap.isOpened():
@@ -69,6 +71,24 @@ while cap.isOpened():
                 is_unlocked=True
                 peace_timer=0
 
+            #check if all fingers are curled in
+            #tip y>knuckle y means tip is lower than knuckle, so finger is curled in
+            index_curled=index_tip>index_knuckle
+            middle_curled=middle_tip>middle_knuckle
+            ring_curled=ring_tip>ring_knuckle
+            pinky_curled=pinky_tip>pinky_knuckle
+
+            if index_curled and middle_curled and ring_curled and pinky_curled:
+                fist_timer+=1
+            else:
+                fist_timer=0
+
+            #lock if held for 15 frames
+            if fist_timer>15:
+                print("FIST DETECTED - LOCKED")
+                is_unlocked=False
+                fist_timer=0
+
             if is_unlocked:
                 h, w, c=frame.shape
                 #get xand y coord of center of hand
@@ -83,7 +103,10 @@ while cap.isOpened():
                 cy_clamped=max(min_y, min(cy, max_y))
                 #calc vol
                 normalized_vol=(cy_clamped-min_y)/usable_height
-                volume=int((1-normalized_vol)*100)
+                #calc rawa vol
+                raw_volume=((1-normalized_vol)*100)
+                #round to nearest 5
+                volume=round(raw_volume/5)*5
                 print(f"Volume: {volume}%")
                 volume_control.SetMasterVolumeLevelScalar(volume/100.0, None)
             
