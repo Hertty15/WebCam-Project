@@ -4,7 +4,7 @@ Control your laptop using your hand seen in the camera.
 
 ## 🎬 Demo
 
-Watch the demo video here ()
+Watch the demo video here (https://www.loom.com/share/60c6a2e5755f4461bd835293e1a7ee74)
 
 ## ✨ Features
 
