@@ -1,17 +1,17 @@
 # 🎮 Gesture-Controlled Volume System
 
-Control your laptop volume with just hand gestures! No touch required.
+Control your laptop using your hand seen in the camera.
 
 ## 🎬 Demo
 
-[Watch the demo video here](YOUR_VIDEO_LINK_HERE)
+Watch the demo video here ()
 
 ## ✨ Features
 
 - **Peace Sign (✌️) to Unlock** - Hold for 0.5 seconds to activate
 - **Hand Movement to Control Volume** - Move your hand up/down like a volume slider
 - **Fist (✊) to Lock** - Hold for 0.5 seconds to deactivate
-- **Smart Detection** - Won't accidentally trigger from random hand movements
+- **Smart Detection** - It won't accidentally trigger from random hand movements without unlocking
 - **Volume Snapping** - Automatically rounds to nearest 5% for smooth control
 
 ## 🚀 Installation
