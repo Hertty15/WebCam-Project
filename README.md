@@ -20,3 +20,26 @@ Watch the demo video here ()
 2. Install dependencies:
 ```bash
 pip install opencv-python mediapipe pycaw comtypes
+```
+
+📖  Instructions
+Run the script ```python main.py``` 
+A webcam window will open
+Show a peace sign - Hold it for half a second to unlock
+Move your hand up/down - Your hand position controls the volume
+Hand at top = 100% volume
+Hand at bottom = 0% volume
+Make a fist - Hold for half a second to lock the system
+
+🛠️ Built With
+Python - Programming language
+OpenCV - Computer vision library
+MediaPipe - Hand tracking by Google
+PyCAW - Windows audio control
+
+🔮 Future Improvements
+Add brightness control
+Add visual volume bar on screen
+Add minimize windows gesture
+Convert to .exe file for easy installation
+Auto-lock after 5 seconds of inactivity
