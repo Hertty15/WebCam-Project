@@ -1,6 +1,11 @@
-# 🎮 Gesture-Controlled Volume System
+# 🎮 Gesture-Controlled System
 
 Control your laptop using your hand seen in the camera.
+
+## Web Demo
+https://hertty15.github.io/WebCam-Project/
+
+    
 
 ## ✨ Features
 -**Pinch** your thumb and index finger to 'grab' the volume slider and move
