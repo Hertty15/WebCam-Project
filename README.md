@@ -5,8 +5,6 @@ Control your laptop using your hand seen in the camera.
 ## Web Demo
 https://hertty15.github.io/WebCam-Project/
 
-    
-
 ## ✨ Features
 -**Pinch** your thumb and index finger to 'grab' the volume slider and move
 
@@ -17,6 +15,8 @@ https://hertty15.github.io/WebCam-Project/
 ```bash
 pip install opencv-python mediapipe pycaw comtypes
 ```
+## Requirements
+For requirements check requirements.txt
 
 📖  Instructions
 Run the script ```python main.py``` 
