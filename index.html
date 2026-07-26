@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Stardance Gesture Control</title>
+    <title>Gesture Control</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
@@ -110,7 +110,7 @@
     </style>
 </head>
 <body>
-    <h1> Stardance Web Demo</h1>
+    <h1>Web Demo</h1>
     <button id="startBtn" onclick="startCamera()"> Start Camera</button>
     
     <div class="container" id="mainContent" style="display: none;">
@@ -133,16 +133,16 @@
             <div class="instructions">
                 <h3>How to Use:</h3>
                 <div class="instruction-item">
-                    <strong>🤏 Pinch Thumb + Index</strong><br>
-                    "Grab" the volume slider
+                    <strong>Pinch Thumb + Index</strong><br>
+                    "Grab" the volume slider.
                 </div>
                 <div class="instruction-item">
-                    <strong>👆 Move Hand Up/Down</strong><br>
-                    Drag the slider to change volume
+                    <strong>Move Hand Up/Down</strong><br>
+                    Drag the slider to change volume.
                 </div>
                 <div class="instruction-item">
-                    <strong>🖐️ Open Hand</strong><br>
-                    "Drop" the slider to lock volume
+                    <strong>Open Hand</strong><br>
+                    "Drop" the slider to lock volume.
                 </div>
             </div>
         </div>
@@ -199,14 +199,14 @@
             canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
             if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
-                const landmarks = results.multiHandLandmarks[0];
-                const thumbTip = landmarks[4];
-                const indexTip = landmarks[8];
+                const landmarks=results.multiHandLandmarks[0];
+                const thumbTip=landmarks[4];
+                const indexTip=landmarks[8];
                 
-                const thumbX = thumbTip.x * canvasElement.width;
-                const thumbY = thumbTip.y * canvasElement.height;
-                const indexX = indexTip.x * canvasElement.width;
-                const indexY = indexTip.y * canvasElement.height;
+                const thumbX=thumbTip.x*canvasElement.width;
+                const thumbY=thumbTip.y *canvasElement.height;
+                const indexX=indexTip.x* canvasElement.width;
+                const indexY=indexTip.y * canvasElement.height;
 
                 const distance = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
                 const pinchThreshold = 0.08;
@@ -252,8 +252,8 @@
                 canvasCtx.fill();
 
                 drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: lineColor, lineWidth: 2});
-            } else {
-                statusElement.textContent = '👋 Show hand';
+            }else{
+                statusElement.textContent = 'Show hand';
                 statusElement.style.color = '#aaa';
             }
             canvasCtx.restore();
