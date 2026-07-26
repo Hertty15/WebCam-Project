@@ -1,45 +1,44 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Gesture Control</title>
+    <title>Stardance Gesture Control</title>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/camera_utils/camera_utils.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utills/drawing_utils.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@mediapipe/drawing_utils/drawing_utils.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@mediapipe/hands/hands.js"></script>
     <style>
-        body{
+        body {
             margin: 0;
             background: linear-gradient(135deg, #1e3c72, #2a5298);
-            font-family: Arail, sans-serif;
+            font-family: Arial, sans-serif;
             color: white;
             display: flex;
             flex-direction: column;
             align-items: center;
             min-height: 100vh;
         }
-        h1{margin-top: 20px; color: #00ff88; font-size: 2.5em;}
-        .container{display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; align-items: flex-start;}
-        .video-container{
+        h1 { margin-top: 20px; color: #00ff88; font-size: 2.5em; }
+        .container { display: flex; gap: 30px; margin-top: 30px; flex-wrap: wrap; justify-content: center; align-items: flex-start; }
+        .video-container {
             border-radius: 20px;
             overflow: hidden;
             box-shadow: 0 10px 40px rgba(0, 255, 136, 0.3);
             border: 3px solid #00ff88;
             background: #000;
         }
-        #input_video{display: none;}
-        #output_canvas{display: block; width: 640px; height: 480px;}
+        #input_video { display: none; }
+        #output_canvas { display: block; width: 640px; height: 480px; }
 
-        .control-panel{
+        .control-panel {
             background: rgba(0,0,0,0.6);
             padding: 30px;
             border-radius: 20px;
             width: 300px;
             text-align: center;
             backdrop-filter: blur(10px);
-            border: 2px solid rbga(0,255,136,0.3);
+            border: 2px solid rgba(0,255,136,0.3);
         }
-
-        /*vert vol bar*/
-        .volume-track{
+        
+        .volume-track {
             width: 40px;
             height: 300px;
             background: #333;
@@ -49,7 +48,7 @@
             overflow: hidden;
             border: 3px solid #555;
         }
-        .volume-fill{
+        .volume-fill {
             position: absolute;
             bottom: 0;
             width: 100%;
@@ -58,36 +57,38 @@
             transition: height 0.1s ease-out;
             box-shadow: 0 0 15px rgba(0,255,136,0.5);
         }
-        .volume-text{
+        
+        .volume-text {
             font-size: 3em;
             font-weight: bold;
             color: #00ff88;
             margin: 10px 0;
         }
-        .status{
-            font-size: 1.em;
+        .status {
+            font-size: 1.2em;
             font-weight: bold;
             padding: 10px;
             border-radius: 10px;
             background: rgba(0,0,0,0.3);
             margin-bottom: 20px;
         }
-        .instructions{
+        .instructions {
             font-size: 0.9em;
             text-align: left;
             line-height: 1.6;
-            margin-bottom: 20px;
+            color: #aaa;
         }
-        .instructions h3{color: #00ff88; margin-bottom: 10px;}
-        .instructions-item{
+        .instructions h3 { color: #00ff88; margin-bottom: 10px; }
+        .instruction-item {
             padding: 8px;
             margin: 5px 0;
-            background: rgb(255,255,255,0.05);
+            background: rgba(255,255,255,0.05);
             border-radius: 8px;
             border-left: 4px solid #00ff88;
         }
-        #startBtn{
-            padding:20px 40px;
+        
+        #startBtn {
+            padding: 20px 40px;
             font-size: 1.3em;
             background: linear-gradient(135deg, #00ff88, #00cc6a);
             color: #000;
@@ -98,161 +99,155 @@
             font-weight: bold;
             box-shadow: 0 5px 20px rgba(0,255,136,0.4);
         }
-        #startBtn:hover{transform: translateY(-2px);}
+        #startBtn:hover { transform: translateY(-2px); }
     </style>
 </head>
 <body>
-    <h1>Web Demo</h1>
-    <button id="startBtn" onclick="startCamera()">Start Camera</button>
+    <h1> Stardance Web Demo</h1>
+    <button id="startBtn" onclick="startCamera()"> Start Camera</button>
     
     <div class="container" id="mainContent" style="display: none;">
-        <!--webcam feed-->
         <div class="video-container">
             <video id="input_video"></video>
             <canvas id="output_canvas" width="640" height="480"></canvas>
         </div>
 
-        <!--contrl panel-->
         <div class="control-panel">
-            <h2 style="margin-top: 0; color: #00ff88;">Virtual Volume</h2>
-
+            <h2 style="margin-top:0; color:#00ff88;">️ Virtual Volume</h2>
+            
             <div class="volume-text" id="volume_text">50%</div>
-
+            
             <div class="volume-track">
                 <div id="volume_fill" class="volume-fill"></div>
             </div>
-
+            
             <div id="status" class="status" style="color: #aaa;">HOVERING</div>
 
             <div class="instructions">
                 <h3>How to Use:</h3>
-                <div class="intructions-item">
-                    <strong>Pinch Thumb + Index</strong><br>
+                <div class="instruction-item">
+                    <strong>🤏 Pinch Thumb + Index</strong><br>
                     "Grab" the volume slider
                 </div>
-                <div class="instructions-item">
-                    <strong>Move Hand Up/Down</strong><br>
+                <div class="instruction-item">
+                    <strong>👆 Move Hand Up/Down</strong><br>
                     Drag the slider to change volume
                 </div>
-                <div class="instructions-item">
-                    <strong>Open Hand</strong><br>
-                    "Drop the slider to lock volume"
+                <div class="instruction-item">
+                    <strong>🖐️ Open Hand</strong><br>
+                    "Drop" the slider to lock volume
                 </div>
             </div>
         </div>
     </div>
 
     <script>
-        const videoElement=document.getElementById('input_video');
-        const canvasElement=document.getElementById('output_canvas');
-        const canvasCtx=canvasElement.getContext('2d');
-        const statusElement=document.getElementById('status');
-        const volumeFill=document.getElementById('volume_fill');
-        const volumeText=document.getElementById('volume_text');
-        const startBtn=document.getElementById('startBtn');
-        const mainContent=document.getElementById('mainContent');
+        const videoElement = document.getElementById('input_video');
+        const canvasElement = document.getElementById('output_canvas');
+        const canvasCtx = canvasElement.getContext('2d');
+        const statusElement = document.getElementById('status');
+        const volumeFill = document.getElementById('volume_fill');
+        const volumeText = document.getElementById('volume_text');
+        const startBtn = document.getElementById('startBtn');
+        const mainContent = document.getElementById('mainContent');
 
-        let isGrabbing=false;
-        let currentVolume=50;
+        let isGrabbing = false;
+        let currentVolume = 50;
 
-        async function StartCamera() {
-            try{
-                const stream=await navigator.mediaDevices.getUserMedia({video: {width:640, height:480}});
-                videoElement.srcObject=stream;
-
+        async function startCamera() {
+            try {
+                const stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480 } });
+                videoElement.srcObject = stream;
+                
                 await new Promise((resolve) => {
-                    videoElement.onloadedmetadata = () => {videoElement.play(); resolve();};
+                    videoElement.onloadedmetadata = () => { videoElement.play(); resolve(); };
                 });
-
-                startBtn.style.display='none';
-                mainContent.style.display='flex';
-
-                const hands=new Hands({locateFile: (file) => {
+                
+                startBtn.style.display = 'none';
+                mainContent.style.display = 'flex';
+                
+                const hands = new Hands({locateFile: (file) => {
                     return `https://cdn.jsdelivr.net/npm/@mediapipe/hands/${file}`;
                 }});
-
-                hands.setOptions({maxNumHands: 1, modelComplexity: 1, minDetectionConfidence:0.7});
-                hands.onResult(onResult);
-
+                
+                hands.setOptions({ maxNumHands: 1, modelComplexity: 1, minDetectionConfidence: 0.7 });
+                hands.onResults(onResults);
+                
                 async function processFrame() {
-                    if(videoElement.readyState >= 2) await hands.send({image: videoElement});
+                    if (videoElement.readyState >= 2) await hands.send({image: videoElement});
                     requestAnimationFrame(processFrame);
                 }
                 processFrame();
-
-                statusElement.textContent='HOVERING';
-                statusElement.style.color='#aaa'
-            } catch (err){
+                
+                statusElement.textContent = 'HOVERING';
+                statusElement.style.color = '#aaa';
+            } catch (err) {
                 alert('Camera error: ' + err.message);
             }
         }
 
-        function onResult(results){
+        function onResults(results) {
             canvasCtx.save();
-            canvasCtx.clearRect(0,0, canvasElement.width, canvasElement,height);
-            canvasCtx.drawImage(results.image, 0,0, canvasElement.width, canvasElement.height);
+            canvasCtx.clearRect(0, 0, canvasElement.width, canvasElement.height);
+            canvasCtx.drawImage(results.image, 0, 0, canvasElement.width, canvasElement.height);
 
-            if(results.multiHandLandmarks && results.multiHandLandmarks.length >0) {
-                const landmarks=results.multiHandLandmarks[0];
-                const thumbTip=landmarks[4];
-                const indexTip=landmarks[8];
+            if (results.multiHandLandmarks && results.multiHandLandmarks.length > 0) {
+                const landmarks = results.multiHandLandmarks[0];
+                const thumbTip = landmarks[4];
+                const indexTip = landmarks[8];
+                
+                const thumbX = thumbTip.x * canvasElement.width;
+                const thumbY = thumbTip.y * canvasElement.height;
+                const indexX = indexTip.x * canvasElement.width;
+                const indexY = indexTip.y * canvasElement.height;
 
-                const thumbX=thumbTip.x* canvasElement.width;
-                const thumbY=thumbTip.y* canvasElement.height;
-                const indexX=indexTip.x* canvasElement.width;
-                const indexY=indexTip.y* canvasElement.height;
+                const distance = Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
+                const pinchThreshold = 0.08;
 
-                //calc pinch dist
-                const distance =Math.hypot(thumbTip.x - indexTip.x, thumbTip.y - indexTip.y);
-                const pinchThreshold=0.08;
-
-                //grab and drag logic
-                if (distance<pinchThreshold){
-                    isGrabbing=true;
-                    currentVolume=Math.max(0,Math.min(100, (1-indexTip.y) *100));
-                }else{
-                    isGrabbing=false
+                if (distance < pinchThreshold) {
+                    isGrabbing = true;
+                    currentVolume = Math.max(0, Math.min(100, (1 - indexTip.y) * 100));
+                } else {
+                    isGrabbing = false;
                 }
 
-                //update ui
-                volumeFill.style.height=currentVolume+'%';
-                volumeFill.textContent=Math.round(currentVolume)+'%';
-
-                if(isGrabbing){
-                    statusElement.textContent='GRABBED';
-                    statusElement.style.color='#00ff88';
-                    volumeFill.style.background='linear-gradient(to top, #00ff88, #00ffcc)';
-                }else{
-                    statusElement.textContent='HOVERING';
-                    statusElement.style.color='#aaa';
-                    volumeFill.style.background='linear-gradient(to top, #00ff88, #00ffcc)';
+                volumeFill.style.height = currentVolume + '%';
+                volumeText.textContent = Math.round(currentVolume) + '%';
+                
+                if (isGrabbing) {
+                    statusElement.textContent = '🟢 GRABBED';
+                    statusElement.style.color = '#00ff88';
+                    volumeFill.style.background = 'linear-gradient(to top, #00ff88, #00ffcc)';
+                } else {
+                    statusElement.textContent = '⚪ HOVERING';
+                    statusElement.style.color = '#aaa';
+                    volumeFill.style.background = 'linear-gradient(to top, #00cc6a, #00ff88)';
                 }
 
-                //draw visual feedbakc on canvas
-                const lineColor=isGrabbing ? '#00ff88' : '#ff0055';
-                const lineWidth=isGrabbing ? 6:3;
-
+                const lineColor = isGrabbing ? '#00ff88' : '#ff0055';
+                const lineWidth = isGrabbing ? 6 : 3;
+                
                 canvasCtx.beginPath();
                 canvasCtx.moveTo(thumbX, thumbY);
-                canvasCtx.lineTo(indexX,indexY);
-                canvasCtx.strokeStyle=lineColor;
-                canvasCtx.lineWidth=lineWidth;
+                canvasCtx.lineTo(indexX, indexY);
+                canvasCtx.strokeStyle = lineColor;
+                canvasCtx.lineWidth = lineWidth;
                 canvasCtx.stroke();
-
+                
                 canvasCtx.beginPath();
                 canvasCtx.arc(thumbX, thumbY, 12, 0, 2 * Math.PI);
-                canvasCtx.fillStyle=lineColor;
+                canvasCtx.fillStyle = lineColor;
                 canvasCtx.fill();
-
+                
                 canvasCtx.beginPath();
-                canvasCtx.arc(indexX, indexY, 12, 0, 2*Math.PI);
-                canvasCtx.fillStyle=lineColor;
+                canvasCtx.arc(indexX, indexY, 12, 0, 2 * Math.PI);
+                canvasCtx.fillStyle = lineColor;
                 canvasCtx.fill();
 
-                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color:lineColor, lineWidth:2});
-            }else{
-                statusElement.textContent='Show hand';
-                statusElement.style.color='#aaa';
+                drawConnectors(canvasCtx, landmarks, HAND_CONNECTIONS, {color: lineColor, lineWidth: 2});
+            } else {
+                statusElement.textContent = '👋 Show hand';
+                statusElement.style.color = '#aaa';
             }
             canvasCtx.restore();
         }
